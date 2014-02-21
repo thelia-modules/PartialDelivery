@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <loops>
+        <loop name="partial.delivery.get.not.sent.products" class="PartialDelivery\Loop\NotSentOrderProducts" />
+    </loops>
+
+    <forms>
+        <form name="partial.send.form" class="PartialDelivery\Form\PartialSend" />
+
+    </forms>
+
+    <services>
+        <service id="send.partialdelivery.mail" class="PartialDelivery\Listener\SendEMail" scope="request">
+            <argument type="service" id="thelia.parser" />
+            <argument type="service" id="mailer"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="partialdelivery.update.service" class="PartialDelivery\Listener\Update">
+            <argument type="service" id="event_dispatcher" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
+
+</config>

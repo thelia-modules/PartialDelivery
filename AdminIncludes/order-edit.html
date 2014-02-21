@@ -1,0 +1,70 @@
+<div class="panel panel-default">
+    {if isset($smarty.get.errmes) and !empty($smarty.get.errmes)}
+        <div class="alert alert-error">
+            {$smarty.get.errmes}
+        </div>
+    {/if}
+    <div class="panel-heading">
+        {intl l="Partial Delivery"}
+    </div>
+
+    <div class="panel-body">
+        {form type="partial.send.form" name="partial.send.form"}
+        <form id="partial-send-form" method="post" action="{url path='/admin/module/partialdelivery/send'}/{$ID}" />
+            <table class="table table-striped table-condensed">
+                <thead>
+                <tr>
+                    <th class="object-title">
+                        {intl l="Product"}
+                    </th>
+                    <th class="object-title">
+                        {intl l="Ordered Quantity"}
+                    </th>
+                    <th class="object-title">
+                        {intl l="Sent Quantity"}
+                    </th>
+                    <th class="object-title">
+                        {intl l="Send quantity"}
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="partial-delivery-orders-form-selection-container">
+
+                        {form_hidden_fields form=$form}
+                        {loop name="not.sent.products.partial.delivery" type="partial.delivery.get.not.sent.products" orderid=$ID}
+                        <tr>
+
+                            <td>
+                                <label for="partialdelivery-{$PRODUCT_ID}">
+                                    {$PRODUCT_TITLE}
+                                </label>
+                            </td>
+                            <td>
+                                {$QTY}
+                            </td>
+                            <td>
+                                {$SENTQTY}
+                            </td>
+
+                            {form_field form=$form field=$PRODUCT_REF}
+                                <td>
+                                    <select name="{$name}" id="partialdelivery-{$PRODUCT_ID}" class="form-control">
+                                        {for $i=0 to $QTY-$SENTQTY}
+                                        <option value="{$i}">{$i}</option>
+                                        {/for}
+                                    </select>
+                                </td>
+                            {/form_field}
+                        </tr>
+
+                        {/loop}
+
+
+                </tbody>
+            </table>
+        <button type="submit" name="send_partial_order_products" id="send_partial_order_products" value="stay" class="form-submit-button btn btn-sm btn-default" title="{intl l='Send'}">{intl l='Send'} <span class="glyphicon glyphicon-ok"></span></button>
+        </form>
+        {/form}
+
+    </div>
+</div>

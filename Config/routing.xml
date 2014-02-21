@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+	<route id="partial.delivery.send.partial" path="/admin/module/partialdelivery/send/{order_id}" methods="post">
+		<default key="_controller">PartialDelivery\Controller\SendPartialOrder::sendPartial</default>
+		<requirement key="order_id">\d+</requirement>
+	</route>
+</routes>
