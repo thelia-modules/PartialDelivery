@@ -61,7 +61,7 @@ class SendPartialOrder extends BaseAdminController {
 
             /** @var \PartialDelivery\Model\OrderProductPartialDelivery $order_product */
             foreach($notsent_order_products as $order_product) {
-                $data = $vform->get($order_product->getBaseOrderProduct()->getProductSaleElementsRef())->getData();
+                $data = $vform->get(str_replace(".","-",$order_product->getBaseOrderProduct()->getProductSaleElementsRef()))->getData();
 
                 if(is_numeric($data)) {
                     if((int)$data >0)

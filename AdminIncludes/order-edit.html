@@ -46,7 +46,7 @@
                                 {$SENTQTY}
                             </td>
 
-                            {form_field form=$form field=$PRODUCT_REF}
+                            {form_field form=$form field=$PRODUCT_REF|replace:".":"-"}
                                 <td>
                                     <select name="{$name}" id="partialdelivery-{$PRODUCT_ID}" class="form-control">
                                         {for $i=0 to $QTY-$SENTQTY}

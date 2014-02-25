@@ -70,7 +70,7 @@ class PartialSend extends BaseForm {
 
             $this->formBuilder
                 ->add(
-                    $order_product->getBaseOrderProduct()->getProductSaleElementsRef(),
+                    str_replace(".","-",$order_product->getBaseOrderProduct()->getProductSaleElementsRef()),
                     "choice",
                     array(
                         'expanded'=>false,
