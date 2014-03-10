@@ -21,14 +21,14 @@
 /*                                                                                   */
 /*************************************************************************************/
 
-
 namespace PartialDelivery\Form;
 
 use PartialDelivery\Model\OrderProductPartialDeliveryQuery;
 use Thelia\Form\BaseForm;
 use Thelia\Model\OrderQuery;
 
-class PartialSend extends BaseForm {
+class PartialSend extends BaseForm
+{
     /**
      *
      * in this function you add all the fields you need for your Form.
@@ -55,17 +55,17 @@ class PartialSend extends BaseForm {
         $order_id = $request->get('order_id');
         $order = OrderQuery::create()->findPk($order_id);
 
-        if($order === null) {
+        if ($order === null) {
             throw new \Exception("You must have a valid order_id argument in your route in order to use this form.");
         }
         $query = OrderProductPartialDeliveryQuery::create()
             ->findByNotSentOrderProducts($order);
 
         /** @var \PartialDelivery\Model\OrderProductPartialDelivery $order_product */
-        foreach($query as $order_product) {
+        foreach ($query as $order_product) {
             $products_qties = array();
-            for($i=0; $i<= $order_product->getQuantityToSend(); $i++) {
-                $products_qties[(string)$i]=$i;
+            for ($i=0; $i<= $order_product->getQuantityToSend(); $i++) {
+                $products_qties[(string) $i]=$i;
             }
 
             $this->formBuilder

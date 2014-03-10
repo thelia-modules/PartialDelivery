@@ -23,14 +23,10 @@
 
 namespace PartialDelivery;
 
-use PartialDelivery\Model\OrderProductPartialDeliveryQuery;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
 use Thelia\Model\Base\ModuleQuery;
-use Thelia\Model\Base\OrderStatusQuery;
 use Thelia\Module\BaseModule;
-use PartialDelivery\Model\OrderProductPartialDelivery;
-
 
 /**
  * Class PartialDelivery
@@ -39,10 +35,6 @@ use PartialDelivery\Model\OrderProductPartialDelivery;
  */
 class PartialDelivery extends BaseModule
 {
-
-    const STATUS_PROCESSING = 3;
-
-    const STATUS_SENT = 4;
     /*
      * You may now override BaseModuleInterface methods, such as:
      * install, destroy, preActivation, postActivation, preDeactivation, postDeactivation
@@ -55,22 +47,10 @@ class PartialDelivery extends BaseModule
 
         $database->insertSql(null, array(__DIR__."/Config/thelia.sql"));
 
-
-        // Init plugin with previous orders
-        $query = OrderProductPartialDeliveryQuery::create()
-            ->findNotUsedOrderProduct();
-
-        // Add products that doesn't exist
-        /** @var \Thelia\Model\OrderProduct $order_product */
-        foreach($query as $order_product) {
-            $new_product = new OrderProductPartialDelivery();
-            $new_product->setId($order_product->getId())
-                ->setSentQuantity(0)
-                ->save();
-        }
     }
 
-    public static function getModCode() {
+    public static function getModCode()
+    {
         return ModuleQuery::create()
             ->findOneByCode("PartialDelivery")->getId();
     }

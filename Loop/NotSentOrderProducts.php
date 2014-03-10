@@ -23,7 +23,6 @@
 
 namespace PartialDelivery\Loop;
 
-
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -34,7 +33,8 @@ use PartialDelivery\Model\OrderProductPartialDeliveryQuery;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Model\OrderQuery;
 
-class NotSentOrderProducts extends BaseLoop implements PropelSearchLoopInterface {
+class NotSentOrderProducts extends BaseLoop implements PropelSearchLoopInterface
+{
     /**
      * @param LoopResult $loopResult
      *
@@ -43,12 +43,12 @@ class NotSentOrderProducts extends BaseLoop implements PropelSearchLoopInterface
     public function parseResults(LoopResult $loopResult)
     {
         /** @var \PartialDelivery\Model\OrderProductPartialDelivery $order_product */
-        foreach($loopResult->getResultDataCollection() as $order_product) {
+        foreach ($loopResult->getResultDataCollection() as $order_product) {
             $loopResultRow = new LoopResultRow();
 
             $order_product_base = $order_product->getBaseOrderProduct();
 
-            if($order_product_base === null) {
+            if ($order_product_base === null) {
                 throw new \Exception("Order product cannot not exist.");
             }
 
@@ -116,7 +116,7 @@ class NotSentOrderProducts extends BaseLoop implements PropelSearchLoopInterface
 
         $order = OrderQuery::create()->findPk($order_id);
 
-        if($order === null) {
+        if ($order === null) {
             throw new \Exception("Order id must be valid");
         }
 

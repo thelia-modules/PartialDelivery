@@ -49,7 +49,7 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
      */
     protected $parser;
 
-    function __construct(ParserInterface $parser,MailerFactory $mailer)
+    public function __construct(ParserInterface $parser,MailerFactory $mailer)
     {
         $this->parser = $parser;
         $this->mailer = $mailer;
@@ -67,7 +67,8 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
      * @params OrderEvent $order
      * Checks if order delivery module is partial delivery and send an email to the customer.
      */
-    public function update_status(PartialDeliveryEvent $event) {
+    public function update_status(PartialDeliveryEvent $event)
+    {
         //send mail
         $order_products = $event->getOrderProducts();
         if (count($order_products)) {
@@ -92,7 +93,7 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
                 $this->parser->assign("nbproducts", count($order_products));
                 $parser_products = array();
                 $is_order_assigned=false;
-                foreach($order_products as $order_product_raw) {
+                foreach ($order_products as $order_product_raw) {
                     if (count($order_product_raw) === 2 &&
                         $order_product_raw[0] instanceof OrderProductPartialDelivery &&
                         is_numeric($order_product_raw[1])
@@ -104,7 +105,7 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
                         $parser_product["title"] = $order_product->getBaseOrderProduct()->getTitle();
                         $parser_product["quantity"] = $order_product_raw[1];
 
-                        if(!$is_order_assigned) {
+                        if (!$is_order_assigned) {
                             $order = $order_product->getBaseOrderProduct()->getOrder();
                             $locale = $order->getLang()->getLocale();
                             $customer =$order->getCustomer();
@@ -120,7 +121,7 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
                 $this->parser->assign("products", $parser_products);
 
                 // If customer is not found
-                if($customer===null) {
+                if ($customer===null) {
                     throw new \Exception("Customer not found, the mail can't be sent.");
                 }
 
@@ -168,4 +169,4 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
         );
     }
 
-} 
+}

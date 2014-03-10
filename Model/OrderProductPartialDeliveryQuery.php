@@ -30,7 +30,7 @@ class OrderProductPartialDeliveryQuery extends BaseOrderProductPartialDeliveryQu
         $ids = array();
 
         /** @var OrderProductPartialDelivery $product */
-        foreach($this->find() as $product) {
+        foreach ($this->find() as $product) {
             $ids[] = $product->getId();
         }
 
@@ -44,7 +44,7 @@ class OrderProductPartialDeliveryQuery extends BaseOrderProductPartialDeliveryQu
     }
 
     /**
-     * @param OrderProduct $order_product
+     * @param  OrderProduct $order_product
      * @return float
      * @throws \Exception
      */
@@ -56,7 +56,7 @@ class OrderProductPartialDeliveryQuery extends BaseOrderProductPartialDeliveryQu
 
         $sent_qty = $this->findPk($order_product->getId());
 
-        if($sent_qty === null) {
+        if ($sent_qty === null) {
             // This would normaly never append, but ...
             $sent_qty = new OrderProductPartialDelivery();
             $sent_qty->setId($order_product->getId())
@@ -69,20 +69,20 @@ class OrderProductPartialDeliveryQuery extends BaseOrderProductPartialDeliveryQu
 
 
     /**
-     * @param Order $order
+     * @param  Order                            $order
      * @return OrderProductPartialDeliveryQuery
      * @throws \Exception
      */
     public function filterByNotSentOrderProducts(Order $order)
     {
-        if($order->getId() === null) {
+        if ($order->getId() === null) {
             throw new \Exception("The order must be valid");
         }
 
         // find all products that aren't completely sent
         $not_completely_sent_orders = array();
-        foreach($order->getOrderProducts() as $order_product) {
-            if($this->getNotSentQuantity($order_product) > 0) {
+        foreach ($order->getOrderProducts() as $order_product) {
+            if ($this->getNotSentQuantity($order_product) > 0) {
                 $not_completely_sent_orders[] = $order_product->getId();
             }
         }
@@ -91,22 +91,25 @@ class OrderProductPartialDeliveryQuery extends BaseOrderProductPartialDeliveryQu
     }
 
     /**
-     * @param Order $order
+     * @param  Order                                                   $order
      * @return array|mixed|\Propel\Runtime\Collection\ObjectCollection
      */
-    public function findByNotSentOrderProducts(Order $order) {
+    public function findByNotSentOrderProducts(Order $order)
+    {
         return $this->filterByNotSentOrderProducts($order)->find();
     }
 
-    public function getFromOrderProductBase(OrderProduct $order_product_base) {
+    public function getFromOrderProductBase(OrderProduct $order_product_base)
+    {
         $search = $this->findPk($order_product_base->getId());
 
-        if($search === null) {
+        if ($search === null) {
             $search = new OrderProductPartialDelivery();
-            $search->setId($order_product->getId())
+            $search->setId($order_product_base->getId())
                 ->setSentQuantity(0);
             $search->save();
         }
+
         return $search;
     }
 } // OrderProductPartialDeliveryQuery

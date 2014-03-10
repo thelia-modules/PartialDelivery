@@ -28,8 +28,8 @@ namespace PartialDelivery\Event;
  * @package PartialDelivery\Event
  * @author Thelia <info@thelia.net>
  */
-class PartialDeliveryEvents {
-
+class PartialDeliveryEvents
+{
     const UPDATE_SENT_QUANTITY="partial.delivery.update.sent.quantity";
 
 }

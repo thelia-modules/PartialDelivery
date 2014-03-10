@@ -22,58 +22,41 @@
 /*                                                                                   */
 /*************************************************************************************/
 
-
 namespace PartialDelivery\Listener;
-
 
 use PartialDelivery\Event\PartialDeliveryEvent;
 use PartialDelivery\Event\PartialDeliveryEvents;
 use PartialDelivery\Model\OrderProductPartialDeliveryQuery;
-use PartialDelivery\PartialDelivery;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
+use Thelia\Model\OrderStatus;
 
 /**
  * Class Update
  * @package PartialDelivery\Listener
  * @author Thelia <info@thelia.net>
  */
-class Update implements EventSubscriberInterface {
-
-    protected $dispatcher;
-
-    public function __construct(EventDispatcherInterface $dispatcher) {
-        $this->dispatcher = $dispatcher;
-    }
-
-    /**
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
-     */
-    public function getDispatcher()
-    {
-        return $this->dispatcher;
-    }
-
+class Update implements EventSubscriberInterface
+{
     /**
      * @param PartialDeliveryEvent $event
      */
-    public function update_quantity(PartialDeliveryEvent $event) {
-
+    public function update_quantity(PartialDeliveryEvent $event)
+    {
         $order_products = $event->getOrderProducts();
-        foreach($order_products as $order_product_raw) {
+        foreach ($order_products as $order_product_raw) {
             /** @var \PartialDelivery\Model\OrderProductPartialDelivery $order_product */
             $order_product = $order_product_raw[0];
             $quantity = $order_product_raw[1];
 
-            if($order_product !== null) {
+            if ($order_product !== null) {
                 $order_product->addSentQuantity($quantity)->save();
             }
 
             $order = $order_product->getBaseOrderProduct()->getOrder();
 
-            if($order === null) {
+            if ($order === null) {
                 // This has not to happend
                 throw new \Exception("Error, order product ".$order_product->getId()." has no order");
             }
@@ -82,26 +65,22 @@ class Update implements EventSubscriberInterface {
 
             // If all products are sent, dispatch an event
             $order_event = new OrderEvent($order);
-            if(!$query->count()) {
-                $order_event->setStatus(PartialDelivery::STATUS_SENT);
+            if (!$query->count()) {
+                $order_event->setStatus(OrderStatus::CODE_SENT);
             } else {
-                $order_event->setStatus(PartialDelivery::STATUS_PROCESSING);
+                $order_event->setStatus(OrderStatus::CODE_PROCESSING);
             }
-            $this->getDispatcher()->dispatch(TheliaEvents::ORDER_UPDATE_STATUS, $order_event);
+            $event->getDispatcher()->dispatch(TheliaEvents::ORDER_UPDATE_STATUS, $order_event);
         }
     }
 
     /**
      * @param OrderEvent $event
      */
-    public function set_sent(OrderEvent $event) {
-        $status = $event->getStatus();
-        if($status === null) {
-            $status = $event->getOrder()->getStatusId();
-        }
-
-        if($status == PartialDelivery::STATUS_SENT) {
-            foreach($event->getOrder()->getOrderProducts() as $order_product_base) {
+    public function set_sent(OrderEvent $event)
+    {
+        if ($event->getOrder()->isSent()) {
+            foreach ($event->getOrder()->getOrderProducts() as $order_product_base) {
                 $order_product = OrderProductPartialDeliveryQuery::create()
                     ->getFromOrderProductBase($order_product_base);
 

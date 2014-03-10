@@ -7,6 +7,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- order_product_partial_delivery
 -- ---------------------------------------------------------------------
 
+-- Create the table with previous order products,
+-- see mysql document to get more information about this syntax:
+-- http://dev.mysql.com/doc/refman/5.0/en/create-table-select.html
 CREATE TABLE IF NOT EXISTS `order_product_partial_delivery`
 (
     `id` INTEGER NOT NULL,
@@ -17,7 +20,8 @@ CREATE TABLE IF NOT EXISTS `order_product_partial_delivery`
         REFERENCES `order_product` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB SELECT id, 0 AS `sent_quantity` FROM `order_product`;
+
 
 
 -- ---------------------------------------------------------------------

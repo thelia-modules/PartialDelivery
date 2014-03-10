@@ -31,17 +31,18 @@ use Thelia\Core\Event\ActionEvent;
  * @package PartialDelivery\Event
  * @author Thelia <info@thelia.net>
  */
-class PartialDeliveryEvent extends ActionEvent {
+class PartialDeliveryEvent extends ActionEvent
+{
     /**
      * @var OrderProductPartialDelivery
      */
     protected $order_products;
 
-    function __construct(array $order_products)
+    public function __construct(array $order_products)
     {
         $this->order_products = array();
 
-        foreach($order_products as $order_products_raw) {
+        foreach ($order_products as $order_products_raw) {
             if(count($order_products_raw) == 2 &&
                 $order_products_raw[0] instanceof OrderProductPartialDelivery &&
                 is_numeric($order_products_raw[1])) {
@@ -51,14 +52,14 @@ class PartialDeliveryEvent extends ActionEvent {
         }
     }
 
-
     /**
-     * @param array $order_product
+     * @param  array                $order_product
      * @return PartialDeliveryEvent
      */
     public function setOrderProducts($order_products)
     {
         $this->order_products = $order_products;
+
         return $this;
     }
 

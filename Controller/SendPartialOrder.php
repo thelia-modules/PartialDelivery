@@ -23,12 +23,10 @@
 
 namespace PartialDelivery\Controller;
 
-
 use PartialDelivery\Event\PartialDeliveryEvent;
 use PartialDelivery\Form\PartialSend;
 use PartialDelivery\Model\OrderProductPartialDeliveryQuery;
 use PartialDelivery\Event\PartialDeliveryEvents;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Model\OrderQuery;
 use Thelia\Tools\Redirect;
@@ -39,12 +37,18 @@ use Thelia\Tools\URL;
  * @package PartialDelivery\Controller
  * @author Thelia <info@thelia.net>
  */
-class SendPartialOrder extends BaseAdminController {
-    public function sendPartial($order_id) {
+class SendPartialOrder extends BaseAdminController
+{
+    public function sendPartial($order_id)
+    {
+        if (null !== $response = $this->checkAuth(array(AdminResources::ORDER), array('PartialDelivery'), AccessManager::UPDATE)) {
+            return $response;
+        }
+
         $order = OrderQuery::create()
             ->findPk($order_id);
 
-        if($order === null) {
+        if ($order === null) {
             throw new \Exception("This order doesn't exist");
         }
 
@@ -55,27 +59,26 @@ class SendPartialOrder extends BaseAdminController {
             $form = new PartialSend($this->getRequest());
             $vform = $this->validateForm($form);
 
-
             $notsent_order_products = OrderProductPartialDeliveryQuery::create()
                 ->findByNotSentOrderProducts($order);
 
             /** @var \PartialDelivery\Model\OrderProductPartialDelivery $order_product */
-            foreach($notsent_order_products as $order_product) {
+            foreach ($notsent_order_products as $order_product) {
                 $data = $vform->get(str_replace(".","-",$order_product->getBaseOrderProduct()->getProductSaleElementsRef()))->getData();
 
-                if(is_numeric($data)) {
-                    if((int)$data >0)
+                if (is_numeric($data)) {
+                    if((int) $data >0)
                         $products_to_update[] = array($order_product,$data);
                 } else {
                     throw new \Exception("Value of product '".$order_product->getBaseOrderProduct()->getTitle().
                         "' must be an integer, '".$data."' is not a valid value.");
                 }
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $errmes = $e->getMessage();
         }
 
-        if(count($products_to_update) > 0) {
+        if (count($products_to_update) > 0) {
             $event = new PartialDeliveryEvent($products_to_update);
             $this->dispatch(PartialDeliveryEvents::UPDATE_SENT_QUANTITY, $event);
         }
