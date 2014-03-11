@@ -32,6 +32,8 @@ use Thelia\Model\OrderQuery;
 use Thelia\Tools\Redirect;
 use Thelia\Tools\URL;
 
+use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Security\AccessManager;
 /**
  * Class SendPartialOrder
  * @package PartialDelivery\Controller
